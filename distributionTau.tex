@@ -1,13 +1,12 @@
 \documentclass[12pt]{article}
 \usepackage[letterpaper]{geometry}
 \geometry{top=1.0in, bottom=1.0in, left=1.0in, right=1.0in}
-%\usepackage[margin=.9in]{geometry}
-%\usepackage{probstat}
 \usepackage{amsfonts}
 \usepackage{hyperref}
 \usepackage{setspace}
-%\usepackage{Sweave}
 \usepackage{algorithm2e}
+\usepackage{amsmath}
+\author{Daniel Stahl}
 \setstretch{1} 
 
 \makeatletter
@@ -17,7 +16,6 @@
                                   {\normalfont\large\bfseries}}
 \makeatother
 
-%\setlength{\parindent}{1cm}
 \usepackage[utf8]{inputenc}
 \usepackage[nogin]{Sweave}
 \usepackage{amsthm}
@@ -27,9 +25,7 @@
 \renewcommand{\headrulewidth}{0pt} 
 \renewcommand{\footrulewidth}{0pt} 
 \setlength\headsep{0.333in}
-%\setlength{\parindent}{1cm}
 \newcommand{\bibent}{\noindent \hangindent 40pt}
-%\newcommand{\par}{\indent}
 \newenvironment{workscited}{\newpage \begin{center} \large{\textbf{Works Cited}} \end{center}}{\newpage }
 \newtheorem{Lorenz}{Definition}
 \newtheorem*{Gini}{Hurdle Rule}
@@ -85,8 +81,6 @@
 %%%%%% main content goes below here
 %\pagestyle{empty}
 \maketitle
-\section{Introduction}
-
 \section{Derivation for the Laplace transform of first hitting time for GBM}
 
 Let \(dS=\alpha S dt+\sigma S dW_t\) and \(\tau\) be a stopping time such that \(S_\tau=m\).  By Dynkan's formula, 
@@ -95,17 +89,58 @@ Let \(dS=\alpha S dt+\sigma S dW_t\) and \(\tau\) be a stopping time such that \
 
 If \(f(x)\) satisfies 
 
-\[f_x \alpha x+\frac{1}{2} f_{xx} \sigma^2 x^2 -uf=0\]
+\begin{equation}\label{ode}f_x \alpha x+\frac{1}{2} f_{xx} \sigma^2 x^2 -uf=-u\end{equation}
 
 Then Dynkan's formula implies that 
 
-\[\mathbb{E}[e^{-u\tau} f(S_\tau)]=f(S_0)\]
+\[\mathbb{E}[e^{-u\tau}f(S_\tau)]=f(S_0)+\mathbb{E}\left[e^{-u \tau}\right]-1\]
 
-If \(f(S_\tau)=1\) and \(f(0)=0\) then \(f\) is uniquely determined and is the Laplace transform of the density of \(\tau\).  It remains only to solve the ODE.  Introducing \(\gamma_+\) and \(\gamma_{-}\) where \[\gamma =  \left(\frac{\sigma^2}{2}-\alpha  \pm \sqrt{\left(\alpha -\frac{\sigma^2}{2}\right)^2+2u\sigma^2}\right)/\sigma^2\]
-The solution can be written as \(c_1 S ^ {\gamma_+}+c_2 S^{\gamma_{-}}\).   If \(S<m\) then \(c_2\) must be zero or \(f\) tends towards positive or negative infinity as \(S \to 0\).  On the other hand, if \(S>m\) then \(c_1\) must be zero or \(f\) tends towards positive or negative infinity as \(S \to \infty\).  Therefore the solution to the ODE is as follows (making explicit the dependence on \(u\)):
+Which can be solved for \(\mathbb{E}\left[e^{-u \tau}\right]\), the Laplace transform of the density of \(\tau\).
+\\
+
+One boundary condition is determined: if \(S>m\) then \(\lim_{S \to \infty} f(S)=0\), and if \(S<m\) then \(\lim_{S \to 0} f(S)=0\).  We have some flexibility over other boundary conditions, but \(f(S_\tau)=f(m)=0\) is an obvious choice.  If \(f(m)=0\) is chosen, then \(\mathbb{E}[e^{-u\tau}f(S_\tau)]=0\), and so 
+\[f(S_0)=1-\mathbb{E}\left[e^{-u \tau}\right]\]
+
+Or, rearranging,
+
+\begin{equation} \label{laplace} \mathbb{E}\left[e^{-u \tau}\right]=1-f(S_0)\end{equation}
+
+
+\subsection{Directly solving \(f\)}
+
+To solve equation \ref{ode}, introduce \(\gamma_+\) and \(\gamma_{-}\) where \[\gamma =  \left(\frac{\sigma^2}{2}-\alpha  \pm \sqrt{\left(\alpha -\frac{\sigma^2}{2}\right)^2+2u\sigma^2}\right)/\sigma^2\]
+The general solution to the complementary homogeneous equation can be written as \(c_1 S ^ {\gamma_+}+c_2 S^{\gamma_{-}}\).   If \(S<m\) then \(c_2\) must be zero or \(f\) tends towards positive or negative infinity as \(S \to 0\).  On the other hand, if \(S>m\) then \(c_1\) must be zero or \(f\) tends towards positive or negative infinity as \(S \to \infty\). A particular solution to equation \ref{ode} is \(f^p(x)=1\), so a full solution is \(f(x)=c S ^ \gamma +1\), where \(c\) is the remaining unknown constant, and \(\gamma = \gamma_{-}\) if \(S>m\) and \(\gamma= \gamma_{+}\) if \(S<m\).
+
+Selecting \(f(S_\tau)=f(m)=0\) as the other boundary condition,
+
+\[c m^{\gamma}+1=0 \implies c = -m^{-\gamma}\]
+
+Therefore the solution to equation \ref{ode} is as follows (making explicit the dependence on \(u\)):
 
 \begin{equation}
 f(u; S)=\left\{
+\begin{array}{rl}
+1-\left(\frac{S}{m} \right) ^ {\gamma_{+}} , & \mathrm{if}  S<m \\
+1-\left(\frac{S}{m} \right) ^ {\gamma_{-}}, & \mathrm{if} S>m
+\end{array}
+\right.
+\end{equation}
+
+This can then be re-arranged to solve for the Laplace transform.
+
+\subsection{Solving for \(g\)}\label{homogenous}
+
+However, notice that \(g(x)=\mathbb{E}\left[e^{-u\tau}\right]=1-f(x)\) also solves an ODE.  Since \(g_x=-f_x,\,g_{xx}=-f_{xx}\) and substituting into equation \ref{ode}, 
+
+\[-g_x\alpha x -\frac{1}{2} g_xx \sigma^2 x^2-u(1-g)=-u\]
+\[\implies g_x \alpha x + \frac{1}{2} g_xx \sigma^2 x^2-ug=0\]
+
+With boundary condition \(g(m)=1\).  This, being a homogenous differential equation, is easier to solve than the one for \(f\), and solving it directly yields the Laplace transform.  
+
+Either way, the Laplace transform can be found as follows:
+
+\begin{equation}
+\mathcal{L}(u; S)=\left\{
 \begin{array}{rl}
 \left(\frac{S}{m} \right) ^ {\gamma_{+}} , & \mathrm{if}  S<m \\
 \left(\frac{S}{m} \right) ^ {\gamma_{-}}, & \mathrm{if} S>m
@@ -118,9 +153,9 @@ f(u; S)=\left\{
 Consider a diffusion satisfying
 \[dX=\alpha(X, t)dt+\sigma(X, t)dW_t\]
 
-Then the solution of the ODE 
+Then using the approach in subsection \ref{homogenous}, the solution \(g\) to 
 
-\[f_x \alpha(X, t)+ \frac{\sigma^2}{2}f_{xx} dt- uif=0\]
+\[g_x \alpha(X, t)+ \frac{\sigma^2}{2}g_{xx} dt- uig=0\]
 
 is the characteristic function of \(\tau\).  The distribution can then be recovered using inversion techniques.  However, the ODE tends not to have analytical solutions, being non-linear and second order.  
 

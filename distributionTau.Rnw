@@ -1,12 +1,9 @@
 \documentclass[12pt]{article}
 \usepackage[letterpaper]{geometry}
 \geometry{top=1.0in, bottom=1.0in, left=1.0in, right=1.0in}
-%\usepackage[margin=.9in]{geometry}
-%\usepackage{probstat}
 \usepackage{amsfonts}
 \usepackage{hyperref}
 \usepackage{setspace}
-%\usepackage{Sweave}
 \usepackage{algorithm2e}
 \setstretch{1} 
 
@@ -17,7 +14,6 @@
                                   {\normalfont\large\bfseries}}
 \makeatother
 
-%\setlength{\parindent}{1cm}
 \usepackage[utf8]{inputenc}
 \usepackage[nogin]{Sweave}
 \usepackage{amsthm}
@@ -27,9 +23,7 @@
 \renewcommand{\headrulewidth}{0pt} 
 \renewcommand{\footrulewidth}{0pt} 
 \setlength\headsep{0.333in}
-%\setlength{\parindent}{1cm}
 \newcommand{\bibent}{\noindent \hangindent 40pt}
-%\newcommand{\par}{\indent}
 \newenvironment{workscited}{\newpage \begin{center} \large{\textbf{Works Cited}} \end{center}}{\newpage }
 \newtheorem{Lorenz}{Definition}
 \newtheorem*{Gini}{Hurdle Rule}
@@ -110,21 +104,47 @@ qqmath <- function(...) { print(lattice::qqmath(...)) }
 
 Let \(dS=\alpha S dt+\sigma S dW_t\) and \(\tau\) be a stopping time such that \(S_\tau=m\).  By Dynkan's formula, 
 
-\[\mathbb{E} [e^{-u\tau}f(S_\tau)]=f(S_0)+\mathbb{E}\left[ \int_0  ^ \tau \left(f_{S} \alpha S + \frac{1}{2} f_{SS} \sigma^2 S^2-uf\right) e^{-us} ds\right]\]
+\[\mathbb{E} [g(S_\tau)]\mathbb{E} [e^{-u\tau}f(S_\tau)]=g(S_0)+\mathbb{E}\left[ \int_0  ^ \tau \left(f_{S} \alpha S + \frac{1}{2} f_{SS} \sigma^2 S^2-uf\right) e^{-us} ds\right]\]
 
 If \(f(x)\) satisfies 
 
-\[f_x \alpha x+\frac{1}{2} f_{xx} \sigma^2 x^2 -uf=0\]
+\[f_x \alpha x+\frac{1}{2} f_{xx} \sigma^2 x^2 -uf=-u\]
 
 Then Dynkan's formula implies that 
 
-\[\mathbb{E}[e^{-u\tau} f(S_\tau)]=f(S_0)\]
+\[\mathbb{E}[g(S_\tau)]=g(S_0)+\mathbb{E}\right[e^{-u \tau}\left]-1\]
 
-If \(f(S_\tau)=1\) and \(f(0)=0\) then \(f\) is uniquely determined and is the Laplace transform of the density of \(\tau\).  It remains only to solve the ODE.  Introducing \(\gamma_+\) and \(\gamma_{-}\) where \[\gamma =  \left(\frac{\sigma^2}{2}-\alpha  \pm \sqrt{\left(\alpha -\frac{\sigma^2}{2}\right)^2+2u\sigma^2}\right)/\sigma^2\]
-The solution can be written as \(c_1 S ^ {\gamma_+}+c_2 S^{\gamma_{-}}\).   If \(S<m\) then \(c_2\) must be zero or \(f\) tends towards positive or negative infinity as \(S \to 0\).  On the other hand, if \(S>m\) then \(c_1\) must be zero or \(f\) tends towards positive or negative infinity as \(S \to \infty\).  Therefore the solution to the ODE is as follows (making explicit the dependence on \(u\)):
+Which can be solved for \(\mathbb{E}\right[e^{-u \tau}\left]\), the Laplace transform of the density of \(\tau\).
+
+One boundary condition is determined: if \(S>m\) then \(\lim_{S \to \infty} f(S)=0\), and if \(S<m\) then \(\lim{S \to 0} f(S)=0\).  We have some flexibility over other boundary conditions, but \(f(S_\tau)=f(m)=0\) is an obvious one.  If \(f(m)=0\) is chosen, then \(\mathbb{E}[g(S_\tau)]=0\), and so 
+\[g(S_0)=1-\mathbb{E}\right[e^{-u \tau}\left]\]
+
+Or, rearranging,
+
+\[\mathbb{E}\right[e^{-u \tau}\left]=1-g(S_0)\]
+
+It remains only to solve the ODE.  Introducing \(\gamma_+\) and \(\gamma_{-}\) where \[\gamma =  \left(\frac{\sigma^2}{2}-\alpha  \pm \sqrt{\left(\alpha -\frac{\sigma^2}{2}\right)^2+2u\sigma^2}\right)/\sigma^2\]
+The general solution to the complementary homogeneous equation can be written as \(c_1 S ^ {\gamma_+}+c_2 S^{\gamma_{-}}\).   If \(S<m\) then \(c_2\) must be zero or \(f\) tends towards positive or negative infinity as \(S \to 0\).  On the other hand, if \(S>m\) then \(c_1\) must be zero or \(f\) tends towards positive or negative infinity as \(S \to \infty\). A particular solution to the ODE is \(f^p(x)=1\), so the full solution is \(f(x)=c S ^ \gamma +1\) where \(c\) is the remaining unknown constant and \(\gamma = \gamma_+\) if \(S>m\) and \(\gamma= \gamma_{-}\) if \(S<m\).
+
+Selecting \(f(S_\tau)=f(m)=0\) as the other boundary condition,
+
+\[c m^ \gamma+1=0 \implies c= -m^{-\gamma}\]
+
+Therefore the solution to the ODE is as follows (making explicit the dependence on \(u\)):
 
 \begin{equation}
 f(u; S)=\left\{
+\begin{array}{rl}
+1-\left(\frac{S}{m} \right) ^ {\gamma_{+}} , & \mathrm{if}  S<m \\
+1-\left(\frac{S}{m} \right) ^ {\gamma_{-}}, & \mathrm{if} S>m
+\end{array}
+\right.
+\end{equation}
+
+Rearranging yields the Laplace transform:
+
+\begin{equation}
+\mathcal{L}(u; S)=\left\{
 \begin{array}{rl}
 \left(\frac{S}{m} \right) ^ {\gamma_{+}} , & \mathrm{if}  S<m \\
 \left(\frac{S}{m} \right) ^ {\gamma_{-}}, & \mathrm{if} S>m
