@@ -131,8 +131,8 @@ This can then be re-arranged using equation \ref{laplace} to solve for the Lapla
 
 However, notice that \(g(x)=\mathbb{E}\left[e^{-u\tau}\right]=1-f(x)\) also solves an ODE.  Since \(g_x=-f_x,\,g_{xx}=-f_{xx}\) and substituting into equation \ref{ode}, 
 
-\[-g_x\alpha x -\frac{1}{2} g_xx \sigma^2 x^2-u(1-g)=-u\]
-\[\implies g_x \alpha x + \frac{1}{2} g_xx \sigma^2 x^2-ug=0\]
+\[-g_x\alpha x -\frac{1}{2} g_{xx} \sigma^2 x^2-u(1-g)=-u\]
+\[\implies g_x \alpha x + \frac{1}{2} g_{xx} \sigma^2 x^2-ug=0\]
 
 With boundary condition \(g(m)=1\).  This, being a homogenous differential equation, is easier to solve than the one for \(f\), and solving it directly yields the Laplace transform.  
 
@@ -154,7 +154,7 @@ Consider a diffusion satisfying
 
 Then using the approach in subsection \ref{homogenous}, the solution \(g\) to 
 
-\[g_x \alpha(X, t)+ \frac{\sigma^2}{2}g_{xx} dt- uig=0\]
+\[g_x \alpha(x, t)+ \frac{1}{2}g_{xx} \sigma^2(x, t)- uig=0\]
 
 is the characteristic function of \(\tau\).  The distribution can then be recovered using inversion techniques.  However, the ODE tends not to have analytical solutions, being non-linear and second order.  
 
